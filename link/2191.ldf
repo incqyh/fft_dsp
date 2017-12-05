@@ -1,0 +1,40 @@
+ARCHITECTURE(ADSP-2191)
+
+SEARCH_DIR( $ADI_DSP\219x\lib )
+
+// specific code and data
+//$LIBRARIES =  ;
+
+// Libraries from the command line are included in COMMAND_LINE_OBJECTS.
+$OBJECTS = $COMMAND_LINE_OBJECTS;
+
+MEMORY
+{
+	mem_ivt     { TYPE(PM RAM) START(0x000000)	END(0x0001ff)  WIDTH(24) }
+
+    mem_pmcode  { TYPE(PM RAM) START(0x000200)  END(0x005fff)  WIDTH(24) }
+	mem_pmdata  { TYPE(PM RAM) START(0x006000)  END(0x007fff)  WIDTH(24) }
+
+	mem_dmdata  { TYPE(DM RAM) START(0x008000)  END(0x00f7ff)  WIDTH(16) }
+
+}
+
+
+PROCESSOR p0
+{
+    LINK_AGAINST( $COMMAND_LINE_LINK_AGAINST)
+    OUTPUT( $COMMAND_LINE_OUTPUT_FILE )
+
+    SECTIONS
+    {
+
+		dxe_ivt    {  INPUT_SECTIONS($OBJECTS(seg_ivt))  }    > mem_ivt
+
+        dxe_pmcode {  INPUT_SECTIONS($OBJECTS(program)) }  > mem_pmcode
+                
+		dxe_pmdata {  INPUT_SECTIONS($OBJECTS(coeff)) }  > mem_pmdata
+
+		dxe_dmdata {  INPUT_SECTIONS($OBJECTS(buffer)) }  > mem_dmdata
+    
+	}
+}
